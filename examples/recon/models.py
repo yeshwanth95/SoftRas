@@ -41,8 +41,8 @@ class Decoder(nn.Module):
         # load .obj
         self.template_mesh = sr.Mesh.from_obj(filename_obj)
         # vertices_base, faces = srf.load_obj(filename_obj)
-        self.register_buffer('vertices_base', self.template_mesh.vertices.cpu()[0])#vertices_base)
-        self.register_buffer('faces', self.template_mesh.faces.cpu()[0])#faces)
+        self.register_buffer('vertices_base', self.template_mesh.vertices.cpu()[0])  # vertices_base)
+        self.register_buffer('faces', self.template_mesh.faces.cpu()[0])  # faces)
 
         self.nv = self.vertices_base.size(0)
         self.nf = self.faces.size(0)
@@ -93,7 +93,7 @@ class Model(nn.Module):
 
         self.encoder = Encoder(im_size=args.image_size)
         self.decoder = Decoder(filename_obj)
-        self.renderer = sr.SoftRenderer(image_size=args.image_size, sigma_val=args.sigma_val, 
+        self.renderer = sr.SoftRenderer(image_size=args.image_size, sigma_val=args.sigma_val,
                                         aggr_func_rgb='hard', camera_mode='look_at', viewing_angle=15,
                                         dist_eps=1e-10)
         self.laplacian_loss = sr.LaplacianLoss(self.decoder.vertices_base, self.decoder.faces)

@@ -106,3 +106,13 @@ If you find our project useful in your research, please consider citing:
   year={2019}
 }
 ```
+
+```
+@article{liu2020general,
+  title={A General Differentiable Mesh Renderer for Image-based 3D Reasoning},
+  author={Liu, Shichen and Li, Tianye and Chen, Weikai and Li, Hao},
+  journal={IEEE Transactions on Pattern Analysis and Machine Intelligence},
+  year={2020},
+  publisher={IEEE}
+}
+```

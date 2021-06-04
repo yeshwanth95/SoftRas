@@ -35,13 +35,14 @@ class LaplacianLoss(nn.Module):
             return x.sum() / batch_size
         else:
             return x
-        
+
+
 class FlattenLoss(nn.Module):
     def __init__(self, faces, average=False):
         super(FlattenLoss, self).__init__()
         self.nf = faces.size(0)
         self.average = average
-        
+
         faces = faces.detach().cpu().numpy()
         vertices = list(set([tuple(v) for v in np.sort(np.concatenate((faces[:, 0:2], faces[:, 1:3]), axis=0))]))
 

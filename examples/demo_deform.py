@@ -47,7 +47,7 @@ class Model(nn.Module):
         laplacian_loss = self.laplacian_loss(vertices).mean()
         flatten_loss = self.flatten_loss(vertices).mean()
 
-        return sr.Mesh(vertices.repeat(batch_size, 1, 1), 
+        return sr.Mesh(vertices.repeat(batch_size, 1, 1),
                        self.faces.repeat(batch_size, 1, 1)), laplacian_loss, flatten_loss
 
 
@@ -60,22 +60,22 @@ def neg_iou_loss(predict, target):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('-i', '--filename-input', type=str, 
-        default=os.path.join(data_dir, 'source.npy'))
-    parser.add_argument('-c', '--camera-input', type=str, 
-        default=os.path.join(data_dir, 'camera.npy'))
-    parser.add_argument('-t', '--template-mesh', type=str, 
-        default=os.path.join(data_dir, 'obj/sphere/sphere_1352.obj'))
-    parser.add_argument('-o', '--output-dir', type=str, 
-        default=os.path.join(data_dir, 'results/output_deform'))
+    parser.add_argument('-i', '--filename-input', type=str,
+                        default=os.path.join(data_dir, 'source.npy'))
+    parser.add_argument('-c', '--camera-input', type=str,
+                        default=os.path.join(data_dir, 'camera.npy'))
+    parser.add_argument('-t', '--template-mesh', type=str,
+                        default=os.path.join(data_dir, 'obj/sphere/sphere_1352.obj'))
+    parser.add_argument('-o', '--output-dir', type=str,
+                        default=os.path.join(data_dir, 'results/output_deform'))
     parser.add_argument('-b', '--batch-size', type=int,
-        default=120)
+                        default=120)
     args = parser.parse_args()
 
     os.makedirs(args.output_dir, exist_ok=True)
 
     model = Model(args.template_mesh).cuda()
-    renderer = sr.SoftRenderer(image_size=64, sigma_val=1e-4, aggr_func_rgb='hard', 
+    renderer = sr.SoftRenderer(image_size=64, sigma_val=1e-4, aggr_func_rgb='hard',
                                camera_mode='look_at', viewing_angle=15)
 
     # read training images and camera poses
@@ -96,13 +96,13 @@ def main():
         mesh, laplacian_loss, flatten_loss = model(args.batch_size)
         images_pred = renderer.render_mesh(mesh)
 
-        # optimize mesh with silhouette reprojection error and 
+        # optimize mesh with silhouette reprojection error and
         # geometry constraints
         loss = neg_iou_loss(images_pred[:, 3], images_gt[:, 3]) + \
-               0.03 * laplacian_loss + \
-               0.0003 * flatten_loss
+            0.03 * laplacian_loss + \
+            0.0003 * flatten_loss
 
-        loop.set_description('Loss: %.4f'%(loss.item()))
+        loop.set_description('Loss: %.4f' % (loss.item()))
 
         optimizer.zero_grad()
         loss.backward()
@@ -111,7 +111,7 @@ def main():
         if i % 100 == 0:
             image = images_pred.detach().cpu().numpy()[0].transpose((1, 2, 0))
             writer.append_data((255*image).astype(np.uint8))
-            imageio.imsave(os.path.join(args.output_dir, 'deform_%05d.png'%i), (255*image[..., -1]).astype(np.uint8))
+            imageio.imsave(os.path.join(args.output_dir, 'deform_%05d.png' % i), (255*image[..., -1]).astype(np.uint8))
 
     # save optimized mesh
     model(1)[0].save_obj(os.path.join(args.output_dir, 'plane.obj'), save_texture=False)

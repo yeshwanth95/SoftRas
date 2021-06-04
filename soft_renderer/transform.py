@@ -6,6 +6,7 @@ import torch.nn as nn
 
 import soft_renderer.functional as srf
 
+
 class Projection(nn.Module):
     def __init__(self, P, dist_coeffs=None, orig_size=512):
         super(Projection, self).__init__()
@@ -49,9 +50,9 @@ class LookAt(nn.Module):
 
 
 class Look(nn.Module):
-    def __init__(self, camera_direction=[0,0,1], perspective=True, viewing_angle=30, viewing_scale=1.0, eye=None):
+    def __init__(self, camera_direction=[0, 0, 1], perspective=True, viewing_angle=30, viewing_scale=1.0, eye=None):
         super(Look, self).__init__()
-        
+
         self.perspective = perspective
         self.viewing_angle = viewing_angle
         self.viewing_scale = viewing_scale
@@ -73,8 +74,8 @@ class Look(nn.Module):
 
 class Transform(nn.Module):
     def __init__(self, camera_mode='projection', P=None, dist_coeffs=None, orig_size=512,
-                 perspective=True, viewing_angle=30, viewing_scale=1.0, 
-                 eye=None, camera_direction=[0,0,1]):
+                 perspective=True, viewing_angle=30, viewing_scale=1.0,
+                 eye=None, camera_direction=[0, 0, 1]):
         super(Transform, self).__init__()
 
         self.camera_mode = camera_mode
@@ -104,4 +105,3 @@ class Transform(nn.Module):
     @property
     def eyes(self):
         return self.transformer._eyes
-    

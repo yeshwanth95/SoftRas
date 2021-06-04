@@ -22,6 +22,7 @@ class_ids_map = {
     '04530566': 'Watercraft',
 }
 
+
 class ShapeNet(object):
     def __init__(self, directory=None, class_ids=None, set_name=None):
         self.class_ids = class_ids
@@ -94,9 +95,12 @@ class ShapeNet(object):
 
         distances = torch.ones(data_ids.size).float() * self.distance
         elevations = torch.ones(data_ids.size).float() * self.elevation
-        viewpoints_all = srf.get_points_from_angles(distances, elevations, -torch.from_numpy(viewpoint_ids).float() * 15)
+        viewpoints_all = srf.get_points_from_angles(distances, elevations,
+                                                    -torch.from_numpy(viewpoint_ids).float() * 15)
 
         for i in range((data_ids.size - 1) // batch_size + 1):
-            images = torch.from_numpy(self.images[data_ids[i * batch_size:(i + 1) * batch_size]].astype('float32') / 255.)
-            voxels = torch.from_numpy(self.voxels[data_ids[i * batch_size:(i + 1) * batch_size] // 24].astype('float32'))
+            images = torch.from_numpy(
+                self.images[data_ids[i * batch_size:(i + 1) * batch_size]].astype('float32') / 255.)
+            voxels = torch.from_numpy(
+                self.voxels[data_ids[i * batch_size:(i + 1) * batch_size] // 24].astype('float32'))
             yield images, voxels

@@ -75,14 +75,14 @@ def test():
         directory_mesh_cls = os.path.join(directory_mesh, class_id)
         os.makedirs(directory_mesh_cls, exist_ok=True)
         iou = 0
-        
+
         for i, (im, vx) in enumerate(dataset_val.get_all_batches_for_evaluation(args.batch_size, class_id)):
             images = torch.autograd.Variable(im).cuda()
             voxels = vx.numpy()
 
             batch_iou, vertices, faces = model(images, voxels=voxels, task='test')
             iou += batch_iou.sum()
-            
+
             batch_time.update(time.time() - end)
             end = time.time()
 
@@ -99,7 +99,7 @@ def test():
             if i % args.print_freq == 0:
                 print('Iter: [{0}/{1}]\t'
                       'Time {batch_time.val:.3f}\t'
-                      'IoU {2:.3f}\t'.format(i, ((dataset_val.num_data[class_id] * 24) // args.batch_size), 
+                      'IoU {2:.3f}\t'.format(i, ((dataset_val.num_data[class_id] * 24) // args.batch_size),
                                              batch_iou.mean(),
                                              batch_time=batch_time))
 

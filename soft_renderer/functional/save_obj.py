@@ -11,7 +11,7 @@ def create_texture_image(textures, texture_res=16):
     tile_width = int((num_faces - 1.) ** 0.5) + 1
     tile_height = int((num_faces - 1.) / tile_width) + 1
     image = torch.ones(tile_height * texture_res, tile_width * texture_res, 3, dtype=torch.float32)
-    vertices = torch.zeros((num_faces, 3, 2), dtype=torch.float32) # [:, :, UV]
+    vertices = torch.zeros((num_faces, 3, 2), dtype=torch.float32)  # [:, :, UV]
     face_nums = torch.arange(num_faces)
     column = face_nums % tile_width
     row = face_nums / tile_width
@@ -25,10 +25,10 @@ def create_texture_image(textures, texture_res=16):
     vertices = vertices.cuda()
     textures = textures.cuda()
     image = create_texture_image_cuda.create_texture_image(vertices, textures, image, 1e-5)
-    
+
     vertices[:, :, 0] /= (image.shape[1] - 1)
     vertices[:, :, 1] /= (image.shape[0] - 1)
-    
+
     image = image.detach().cpu().numpy()
     vertices = vertices.detach().cpu().numpy()
     image = image[::-1, ::1]
@@ -63,7 +63,7 @@ def save_obj(filename, vertices, faces, textures=None, texture_res=16, texture_t
 
         if textures is not None and texture_type == 'vertex':
             for vertex, color in zip(vertices, textures):
-                f.write('v %.8f %.8f %.8f %.8f %.8f %.8f\n' % (vertex[0], vertex[1], vertex[2], 
+                f.write('v %.8f %.8f %.8f %.8f %.8f %.8f\n' % (vertex[0], vertex[1], vertex[2],
                                                                color[0], color[1], color[2]))
             f.write('\n')
         else:
@@ -89,7 +89,6 @@ def save_obj(filename, vertices, faces, textures=None, texture_res=16, texture_t
         with open(filename_mtl, 'w') as f:
             f.write('newmtl %s\n' % material_name)
             f.write('map_Kd %s\n' % os.path.basename(filename_texture))
-
 
 
 def save_voxel(filename, voxel):

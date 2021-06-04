@@ -16,11 +16,13 @@ def voxelize_sub1(faces, size, dim):
     voxels = torch.zeros(bs, size, size, size).int().cuda()
     return voxelization_cuda.voxelize_sub1(faces, voxels)[0].transpose(dim + 1, -1)
 
+
 def voxelize_sub2(faces, size):
     bs = faces.size(0)
     nf = faces.size(1)
     voxels = torch.zeros(bs, size, size, size).int().cuda()
     return voxelization_cuda.voxelize_sub2(faces, voxels)[0]
+
 
 def voxelize_sub3(faces, voxels):
     bs = voxels.size(0)
@@ -56,6 +58,3 @@ def voxelization(faces, size, normalize=False):
     voxels = voxelize_sub3(faces, voxels)
 
     return voxels
-
-
-

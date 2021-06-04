@@ -13,5 +13,5 @@ def orthogonal(vertices, scale):
     z = vertices[:, :, 2]
     x = vertices[:, :, 0] * scale
     y = vertices[:, :, 1] * scale
-    vertices = torch.stack((x,y,z), dim=2)
+    vertices = torch.stack((x, y, z), dim=2)
     return vertices

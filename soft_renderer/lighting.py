@@ -7,7 +7,7 @@ import soft_renderer.functional as srf
 
 
 class AmbientLighting(nn.Module):
-    def __init__(self, light_intensity=0.5, light_color=(1,1,1)):
+    def __init__(self, light_intensity=0.5, light_color=(1, 1, 1)):
         super(AmbientLighting, self).__init__()
 
         self.light_intensity = light_intensity
@@ -18,7 +18,7 @@ class AmbientLighting(nn.Module):
 
 
 class DirectionalLighting(nn.Module):
-    def __init__(self, light_intensity=0.5, light_color=(1,1,1), light_direction=(0,1,0)):
+    def __init__(self, light_intensity=0.5, light_color=(1, 1, 1), light_direction=(0, 1, 0)):
         super(DirectionalLighting, self).__init__()
 
         self.light_intensity = light_intensity
@@ -27,15 +27,15 @@ class DirectionalLighting(nn.Module):
 
     def forward(self, light, normals):
         return srf.directional_lighting(light, normals,
-                                        self.light_intensity, self.light_color, 
+                                        self.light_intensity, self.light_color,
                                         self.light_direction)
 
 
 class Lighting(nn.Module):
     def __init__(self, light_mode='surface',
-                 intensity_ambient=0.5, color_ambient=[1,1,1],
-                 intensity_directionals=0.5, color_directionals=[1,1,1],
-                 directions=[0,1,0]):
+                 intensity_ambient=0.5, color_ambient=[1, 1, 1],
+                 intensity_directionals=0.5, color_directionals=[1, 1, 1],
+                 directions=[0, 1, 0]):
         super(Lighting, self).__init__()
 
         if light_mode not in ['surface', 'vertex']:
