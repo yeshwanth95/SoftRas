@@ -31,11 +31,13 @@ def main():
     azimuth = 0
 
     # load from Wavefront .obj file
-    mesh = sr.Mesh.from_obj(args.filename_input,
-                            load_texture=True, texture_res=5, texture_type='surface')
+    mesh_ = sr.Mesh.from_obj(args.filename_input,
+                             load_texture=True, texture_res=5, texture_type='surface')
 
     # create renderer with SoftRas
-    renderer = sr.SoftRenderer(camera_mode='look_at')
+    transform = sr.LookAt()
+    lighting = sr.Lighting()
+    rasterizer = sr.SoftRasterizer()
 
     os.makedirs(args.output_dir, exist_ok=True)
 
@@ -43,32 +45,37 @@ def main():
     loop = tqdm.tqdm(list(range(0, 360, 4)))
     writer = imageio.get_writer(os.path.join(args.output_dir, 'rotation.gif'), mode='I')
     for num, azimuth in enumerate(loop):
-        # rest mesh to initial state
-        mesh.reset_()
         loop.set_description('Drawing rotation')
-        renderer.transform.set_eyes_from_angles(camera_distance, elevation, azimuth)
-        images = renderer.render_mesh(mesh)
+
+        # render mesh
+        mesh = lighting(mesh_)
+        transform.set_eyes_from_angles(camera_distance, elevation, azimuth)
+        mesh = transform(mesh)
+        images = rasterizer(mesh)
+
         image = images.detach().cpu().numpy()[0].transpose((1, 2, 0))
         writer.append_data((255*image).astype(np.uint8))
     writer.close()
 
     # draw object from different sigma and gamma
     loop = tqdm.tqdm(list(np.arange(-4, -2, 0.2)))
-    renderer.transform.set_eyes_from_angles(camera_distance, elevation, 45)
+    transform.set_eyes_from_angles(camera_distance, elevation, 45)
     writer = imageio.get_writer(os.path.join(args.output_dir, 'bluring.gif'), mode='I')
     for num, gamma_pow in enumerate(loop):
-        # rest mesh to initial state
-        mesh.reset_()
-        renderer.set_gamma(10**gamma_pow)
-        renderer.set_sigma(10**(gamma_pow - 1))
+
+        # render mesh
+        mesh = lighting(mesh_)
+        mesh = transform(mesh)
+        rasterizer.set_gamma(10**gamma_pow)
+        rasterizer.set_sigma(10**(gamma_pow - 1))
         loop.set_description('Drawing blurring')
-        images = renderer.render_mesh(mesh)
+        images = rasterizer(mesh)
+
         image = images.detach().cpu().numpy()[0].transpose((1, 2, 0))
         writer.append_data((255*image).astype(np.uint8))
     writer.close()
 
     # save to textured obj
-    mesh.reset_()
     mesh.save_obj(os.path.join(args.output_dir, 'saved_spot.obj'), save_texture=True)
 
 

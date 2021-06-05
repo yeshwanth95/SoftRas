@@ -154,7 +154,7 @@ def train():
                   'lr {lr:.6f}\t'
                   'sv {sv:.6f}\t'.format(i, args.num_iterations,
                                          batch_time=batch_time, loss=losses,
-                                         lr=lr, sv=model.renderer.rasterizer.sigma_val))
+                                         lr=lr, sv=model.rasterizer.sigma_val))
 
 
 def adjust_learning_rate(optimizers, learning_rate, i, method):

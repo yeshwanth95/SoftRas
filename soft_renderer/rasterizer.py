@@ -39,6 +39,12 @@ class SoftRasterizer(nn.Module):
         self.aggr_func_alpha = aggr_func_alpha
         self.texture_type = texture_type
 
+    def set_sigma(self, sigma):
+        self.sigma_val = sigma
+
+    def set_gamma(self, gamma):
+        self.gamma_val = gamma
+
     def forward(self, mesh, mode=None):
         image_size = self.image_size * (2 if self.anti_aliasing else 1)
 

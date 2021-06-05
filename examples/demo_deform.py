@@ -75,8 +75,9 @@ def main():
     os.makedirs(args.output_dir, exist_ok=True)
 
     model = Model(args.template_mesh).cuda()
-    renderer = sr.SoftRenderer(image_size=64, sigma_val=1e-4, aggr_func_rgb='hard',
-                               camera_mode='look_at', viewing_angle=15)
+    transform = sr.LookAt(viewing_angle=15)
+    lighting = sr.Lighting()
+    rasterizer = sr.SoftRasterizer(image_size=64, sigma_val=1e-4, aggr_func_rgb='hard')
 
     # read training images and camera poses
     images = np.load(args.filename_input).astype('float32') / 255.
@@ -86,7 +87,7 @@ def main():
     camera_distances = torch.from_numpy(cameras[:, 0])
     elevations = torch.from_numpy(cameras[:, 1])
     viewpoints = torch.from_numpy(cameras[:, 2])
-    renderer.transform.set_eyes_from_angles(camera_distances, elevations, viewpoints)
+    transform.set_eyes_from_angles(camera_distances, elevations, viewpoints)
 
     loop = tqdm.tqdm(list(range(0, 2000)))
     writer = imageio.get_writer(os.path.join(args.output_dir, 'deform.gif'), mode='I')
@@ -94,7 +95,11 @@ def main():
         images_gt = torch.from_numpy(images).cuda()
 
         mesh, laplacian_loss, flatten_loss = model(args.batch_size)
-        images_pred = renderer.render_mesh(mesh)
+
+        # render
+        mesh = lighting(mesh)
+        mesh = transform(mesh)
+        images_pred = rasterizer(mesh)
 
         # optimize mesh with silhouette reprojection error and
         # geometry constraints

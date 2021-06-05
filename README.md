@@ -15,11 +15,9 @@ Soft Rasterizer (SoftRas) is a truly differentiable renderer framework with a no
 
 <img src="https://raw.githubusercontent.com/ShichenLiu/SoftRas/master/data/media/teaser/teaser.png" width="60%">
 
-<!-- As a universal module, SoftRas can be plugged into any optimization framework related to image-based 3D reasoning. There are three properties that make SoftRas particularly suitable for mesh-based 3D optimization: (1) SoftRas is **occlusion-aware**, meaning it is able to flow gradients to the occluded vertices in the input view; (2) SoftRas is able to optimize the **depth/z-coordinate** of the vertices, moving the vertices along the axis perpenticular to the image plane; (3) by using SoftRas, pixels can have **far-range impact** on distant mesh triangles, in which the size of the receptive field can be tuned by `sigma`.    -->
-
 ## Usage
 
-The code is built on Python3 and PyTorch 1.1.0. CUDA is needed in order to install the module. Our code is extended on the basis of [this repo](https://github.com/daniilidis-group/neural_renderer).
+The code is built on Python3 and PyTorch 1.6.0. CUDA (10.1) is needed in order to install the module. Our code is extended on the basis of [this repo](https://github.com/daniilidis-group/neural_renderer). `6/3/2021` update note: we add **testing models** and **recontructed color meshes** below, and also slightly optimized the code structure! Previous version is archived in the `legacy` branch.
 
 
 To install the module, using
@@ -61,6 +59,11 @@ To test the model:
 CUDA_VISIBLE_DEVICES=0 python examples/recon/test.py -eid recon \
     -d 'data/results/models/recon/checkpoint_0200000.pth.tar'
 ```
+
+We also provide our trained model here:
+- SoftRas trained with silhouettes supervision (62+ IoU): [google drive](https://drive.google.com/file/d/1GlZJVih5BMGp026mpxK2scWJXqT94VUx/view?usp=sharing)
+- SoftRas trained with shading supervision (64+ IoU, test with `--shading-model` arg): [google drive](https://drive.google.com/file/d/1r63AKNn3ecMho6RFE7gFefRv78Pmbe5h/view?usp=sharing)
+- SoftRas reconstructed meshes with color (random sampled): [google drive](https://drive.google.com/file/d/1gnSshn0k9JpVpoSTWIQoV2QFAlin3AUK/view?usp=sharing)
 
 ### 2. Image-based Shape Deformation
 

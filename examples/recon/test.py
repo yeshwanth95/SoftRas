@@ -7,6 +7,7 @@ from utils import AverageMeter, img_cvt
 import soft_renderer as sr
 import soft_renderer.functional as srf
 import models
+import models_large
 import time
 import os
 import imageio
@@ -42,14 +43,19 @@ parser.add_argument('-sv', '--sigma-val', type=float, default=SIGMA_VAL)
 
 parser.add_argument('-pf', '--print-freq', type=int, default=PRINT_FREQ)
 parser.add_argument('-sf', '--save-freq', type=int, default=SAVE_FREQ)
+parser.add_argument('--shading-model', action='store_true', help='test shading model')
 args = parser.parse_args()
 
 # setup model & optimizer
-model = models.Model('data/obj/sphere/sphere_642.obj', args=args)
+if args.shading_model:
+    model = models_large.Model('data/obj/sphere/sphere_642.obj', args=args)
+else:
+    model = models.Model('data/obj/sphere/sphere_642.obj', args=args)
 model = model.cuda()
 
 state_dicts = torch.load(args.model_directory)
-model.load_state_dict(state_dicts['model'], strict=False)
+# import ipdb; ipdb.set_trace()
+model.load_state_dict(state_dicts['model'], strict=True)
 model.eval()
 
 dataset_val = datasets.ShapeNet(args.dataset_directory, args.class_ids.split(','), 'val')
