@@ -2,6 +2,7 @@ import math
 
 import torch
 
+
 def get_points_from_angles(distance, elevation, azimuth, degrees=True):
     if isinstance(distance, float) or isinstance(distance, int):
         if degrees:
@@ -20,4 +21,4 @@ def get_points_from_angles(distance, elevation, azimuth, degrees=True):
             distance * torch.cos(elevation) * torch.sin(azimuth),
             distance * torch.sin(elevation),
             -distance * torch.cos(elevation) * torch.cos(azimuth)
-            ]).transpose(1,0)
+            ]).transpose(1, 0)

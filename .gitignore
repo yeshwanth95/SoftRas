@@ -112,5 +112,6 @@ examples/unsupervised_recon
 examples/photo_recon
 examples/recon/demo.py
 examples/recon/script.sh
+examples/test
 
 .DS_Store

@@ -4,7 +4,7 @@ import torch.nn.functional as F
 import numpy as np
 
 
-def ambient_lighting(light, light_intensity=0.5, light_color=(1,1,1)):
+def ambient_lighting(light, light_intensity=0.5, light_color=(1, 1, 1)):
     device = light.device
 
     if isinstance(light_color, tuple) or isinstance(light_color, list):
@@ -15,4 +15,4 @@ def ambient_lighting(light, light_intensity=0.5, light_color=(1,1,1)):
         light_color = light_color[None, :]
 
     light += light_intensity * light_color[:, None, :]
-    return light #[nb, :, 3]
+    return light  # [nb, :, 3]

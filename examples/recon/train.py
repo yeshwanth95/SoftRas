@@ -85,8 +85,9 @@ if args.resume_path:
     optimizer.load_state_dict(state_dicts['optimizer'])
     start_iter = int(os.path.split(args.resume_path)[1][11:].split('.')[0]) + 1
     print('Resuming from %s iteration' % start_iter)
-    
+
 dataset_train = datasets.ShapeNet(args.dataset_directory, args.class_ids.split(','), 'train')
+
 
 def train():
     end = time.time()
@@ -107,7 +108,7 @@ def train():
         viewpoints_b = viewpoints_b.cuda()
 
         # soft render images
-        render_images, laplacian_loss, flatten_loss = model([images_a, images_b], 
+        render_images, laplacian_loss, flatten_loss = model([images_a, images_b],
                                                             [viewpoints_a, viewpoints_b],
                                                             task='train')
         laplacian_loss = laplacian_loss.mean()
@@ -115,8 +116,8 @@ def train():
 
         # compute loss
         loss = multiview_iou_loss(render_images, images_a, images_b) + \
-               args.lambda_laplacian * laplacian_loss + \
-               args.lambda_flatten * flatten_loss
+            args.lambda_laplacian * laplacian_loss + \
+            args.lambda_flatten * flatten_loss
         losses.update(loss.data.item(), images_a.size(0))
 
         # compute gradient and optimize
@@ -129,7 +130,7 @@ def train():
 
         # save checkpoint
         if i % args.save_freq == 0:
-            model_path = os.path.join(directory_output, 'checkpoint_%07d.pth.tar'%i)
+            model_path = os.path.join(directory_output, 'checkpoint_%07d.pth.tar' % i)
             torch.save({
                 'model': model.state_dict(),
                 'optimizer': optimizer.state_dict(),
@@ -138,10 +139,10 @@ def train():
         # save demo images
         if i % args.demo_freq == 0:
             demo_image = images_a[0:1]
-            demo_path = os.path.join(directory_output, 'demo_%07d.obj'%i)
+            demo_path = os.path.join(directory_output, 'demo_%07d.obj' % i)
             demo_v, demo_f = model.reconstruct(demo_image)
             srf.save_obj(demo_path, demo_v[0], demo_f[0])
-            
+
             imageio.imsave(os.path.join(image_output, '%07d_fake.png' % i), img_cvt(render_images[0][0]))
             imageio.imsave(os.path.join(image_output, '%07d_input.png' % i), img_cvt(images_a[0]))
 
@@ -152,8 +153,8 @@ def train():
                   'Loss {loss.val:.3f}\t'
                   'lr {lr:.6f}\t'
                   'sv {sv:.6f}\t'.format(i, args.num_iterations,
-                                         batch_time=batch_time, loss=losses, 
-                                         lr=lr, sv=model.renderer.rasterizer.sigma_val))
+                                         batch_time=batch_time, loss=losses,
+                                         lr=lr, sv=model.rasterizer.sigma_val))
 
 
 def adjust_learning_rate(optimizers, learning_rate, i, method):

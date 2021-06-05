@@ -1,6 +1,7 @@
 import torch
 import torch.nn.functional as F
 
+
 def vertex_normals(vertices, faces):
     """
     :param vertices: [batch size, number of vertices, 3]
@@ -18,18 +19,21 @@ def vertex_normals(vertices, faces):
     device = vertices.device
     normals = torch.zeros(bs * nv, 3).to(device)
 
-    faces = faces + (torch.arange(bs, dtype=torch.int32).to(device) * nv)[:, None, None] # expanded faces
+    faces = faces + (torch.arange(bs, dtype=torch.int32).to(device) * nv)[:, None, None]  # expanded faces
     vertices_faces = vertices.reshape((bs * nv, 3))[faces.long()]
 
     faces = faces.view(-1, 3)
     vertices_faces = vertices_faces.view(-1, 3, 3)
 
-    normals.index_add_(0, faces[:, 1].long(), 
-                       torch.cross(vertices_faces[:, 2] - vertices_faces[:, 1], vertices_faces[:, 0] - vertices_faces[:, 1]))
-    normals.index_add_(0, faces[:, 2].long(), 
-                       torch.cross(vertices_faces[:, 0] - vertices_faces[:, 2], vertices_faces[:, 1] - vertices_faces[:, 2]))
+    normals.index_add_(0, faces[:, 1].long(),
+                       torch.cross(vertices_faces[:, 2] - vertices_faces[:, 1],
+                                   vertices_faces[:, 0] - vertices_faces[:, 1]))
+    normals.index_add_(0, faces[:, 2].long(),
+                       torch.cross(vertices_faces[:, 0] - vertices_faces[:, 2],
+                                   vertices_faces[:, 1] - vertices_faces[:, 2]))
     normals.index_add_(0, faces[:, 0].long(),
-                       torch.cross(vertices_faces[:, 1] - vertices_faces[:, 0], vertices_faces[:, 2] - vertices_faces[:, 0]))
+                       torch.cross(vertices_faces[:, 1] - vertices_faces[:, 0],
+                                   vertices_faces[:, 2] - vertices_faces[:, 0]))
 
     normals = F.normalize(normals, eps=1e-6, dim=1)
     normals = normals.reshape((bs, nv, 3))

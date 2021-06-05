@@ -16,9 +16,15 @@ class Encoder(nn.Module):
         self.conv2 = nn.Conv2d(dim_hidden[0], dim_hidden[1], kernel_size=5, stride=2, padding=2)
         self.conv3 = nn.Conv2d(dim_hidden[1], dim_hidden[2], kernel_size=5, stride=2, padding=2)
 
+        self.conv4 = nn.Conv2d(dim_hidden[0], dim_hidden[0], kernel_size=5, stride=1, padding=2)
+        self.conv5 = nn.Conv2d(dim_hidden[1], dim_hidden[1], kernel_size=5, stride=1, padding=2)
+
         self.bn1 = nn.BatchNorm2d(dim_hidden[0])
         self.bn2 = nn.BatchNorm2d(dim_hidden[1])
         self.bn3 = nn.BatchNorm2d(dim_hidden[2])
+
+        self.bn4 = nn.BatchNorm2d(dim_hidden[0])
+        self.bn5 = nn.BatchNorm2d(dim_hidden[1])
 
         self.fc1 = nn.Linear(dim_hidden[2]*math.ceil(im_size/8)**2, dim_hidden[3])
         self.fc2 = nn.Linear(dim_hidden[3], dim_hidden[4])
@@ -26,7 +32,9 @@ class Encoder(nn.Module):
 
     def forward(self, x):
         x = F.relu(self.bn1(self.conv1(x)), inplace=True)
+        x = F.relu(self.bn4(self.conv4(x)), inplace=True)
         x = F.relu(self.bn2(self.conv2(x)), inplace=True)
+        x = F.relu(self.bn5(self.conv5(x)), inplace=True)
         x = F.relu(self.bn3(self.conv3(x)), inplace=True)
         x = x.view(x.size(0), -1)
         x = F.relu(self.fc1(x), inplace=True)
@@ -40,6 +48,7 @@ class Decoder(nn.Module):
         super(Decoder, self).__init__()
         # load .obj
         self.template_mesh = sr.Mesh.from_obj(filename_obj)
+        # vertices_base, faces = srf.load_obj(filename_obj)
         self.register_buffer('vertices_base', self.template_mesh.vertices.cpu()[0])  # vertices_base)
         self.register_buffer('faces', self.template_mesh.faces.cpu()[0])  # faces)
 

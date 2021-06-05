@@ -6,6 +6,7 @@ from skimage.io import imread
 
 import soft_renderer.cuda.load_textures as load_textures_cuda
 
+
 def load_mtl(filename_mtl):
     '''
     load color (Kd) and filename of textures from *.mtl

@@ -4,8 +4,8 @@ import torch.nn.functional as F
 import numpy as np
 
 
-def directional_lighting(light, normals, light_intensity=0.5, light_color=(1,1,1), 
-                         light_direction=(0,1,0)):
+def directional_lighting(light, normals, light_intensity=0.5, light_color=(1, 1, 1),
+                         light_direction=(0, 1, 0)):
     # normals: [nb, :, 3]
 
     device = light.device
@@ -21,8 +21,8 @@ def directional_lighting(light, normals, light_intensity=0.5, light_color=(1,1,1
     if light_color.ndimension() == 1:
         light_color = light_color[None, :]
     if light_direction.ndimension() == 1:
-        light_direction = light_direction[None, :] #[nb, 3]
+        light_direction = light_direction[None, :]  # [nb, 3]
 
-    cosine = F.relu(torch.sum(normals * light_direction, dim=2)) #[]
+    cosine = F.relu(torch.sum(normals * light_direction, dim=2))  # []
     light += light_intensity * (light_color[:, None, :] * cosine[:, :, None])
-    return light #[nb, :, 3]
+    return light  # [nb, :, 3]
