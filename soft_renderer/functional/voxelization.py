@@ -54,7 +54,7 @@ def voxelization(faces, size, normalize=False):
     voxels3 = voxelize_sub2(faces, size)
 
     voxels = voxels0 + voxels1 + voxels2 + voxels3
-    voxels = (voxels > 0).int()
+    voxels = (voxels > 0).int().contiguous()
     voxels = voxelize_sub3(faces, voxels)
 
     return voxels
