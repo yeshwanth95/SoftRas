@@ -177,7 +177,7 @@ __device__ __forceinline__ void backward_barycentric_p2f_distance(scalar_t grad_
 
 template <typename scalar_t>
 __device__ __forceinline__ scalar_t forward_sample_texture(const scalar_t *texture, const scalar_t *w, const int R, const int k, const int texture_sample_type) {
-    scalar_t texture_k;
+    scalar_t texture_k = 0;
     if (texture_sample_type == 0) { // sample surface color with resolution as R
         const int w_x = w[0] * R;
         const int w_y = w[1] * R;
@@ -196,7 +196,7 @@ __device__ __forceinline__ scalar_t forward_sample_texture(const scalar_t *textu
 
 template <typename scalar_t>
 __device__ __forceinline__ scalar_t backward_sample_texture(const scalar_t grad_color, const scalar_t *w, const int R, const int k, const int texture_sample_type) {
-    scalar_t grad_texture_k;
+    scalar_t grad_texture_k = 0;
     if (texture_sample_type == 0) { // sample surface color with resolution as R
         const int w_x = w[0] * R;
         const int w_y = w[1] * R;
