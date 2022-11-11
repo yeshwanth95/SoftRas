@@ -70,6 +70,33 @@ class Mesh(object):
                                            texture_res=texture_res,
                                            load_texture=False)
             textures = None
+
+        print('Vertices', vertices)
+        print('Faces', faces)
+        print('Textures', textures)
+        print('Texture_res', texture_res)
+        print('Texture_type', texture_type)
+        return cls(vertices, faces, textures, texture_res, texture_type)
+
+    @classmethod
+    def from_data(cls, vertices, faces, normalization=False):
+        '''
+        Create a Mesh object from data
+        '''
+
+        textures = None
+        texture_res=1
+        texture_type='surface'
+        print('Vertices', vertices)
+        print('Faces', faces)
+        print('Textures', textures)
+
+        # normalize into a zero-centered unit cube
+        if normalization:
+            vertices -= vertices.min(0)[0][None, :]
+            vertices /= torch.abs(vertices).max()
+            vertices *= 2
+            vertices -= vertices.max(0)[0][None, :] / 2
         return cls(vertices, faces, textures, texture_res, texture_type)
 
     def save_obj(self, filename_obj, save_texture=False, texture_res_out=16):
